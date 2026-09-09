@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#4b6657">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Palouse">
+<meta name="apple-mobile-web-app-title" content="Mindfulness">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>Palouse 8週間 実践トラッカー</title>
+<title>Mindfulness 8週間 実践トラッカー</title>
 <style>
 :root{
   --bg:#f6f3ed;--card:#fff;--text:#22231f;--muted:#6d6e67;--line:#e5e1d9;
@@ -42,22 +42,14 @@ h1{font-size:21px;margin:4px 0 2px}
   display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted)
 }
 .day.done{background:var(--green);color:#fff}
-.notice{
-  border-left:4px solid var(--green);background:#f4f7f5;padding:10px 12px;
-  border-radius:10px;margin-top:12px;font-size:13px
-}
 label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}
-input,select,textarea,button{
-  font:inherit;
-}
+input,select,textarea,button{font:inherit}
 input,select,textarea{
   width:100%;min-width:0;max-width:100%;
   border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--text);
   -webkit-appearance:none;appearance:none;
 }
-input[type="date"]{
-  display:block;
-}
+input[type="date"]{display:block}
 textarea{min-height:110px;resize:vertical}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{
@@ -75,50 +67,68 @@ textarea{min-height:110px;resize:vertical}
 }
 .w.current,.w.done{background:var(--green);color:#fff}
 .w.lock{opacity:.35}
-.log{padding:10px 0;border-top:1px solid var(--line)}
+.log{padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
 .log:first-child{border-top:0}
+.log:after{content:"編集";float:right;margin-top:-22px;font-size:11px;color:var(--green);font-weight:800}
 .nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:min(720px,100%);display:grid;grid-template-columns:repeat(4,1fr);
   background:rgba(255,255,255,.96);border-top:1px solid var(--line);
-  padding:8px 8px calc(8px + env(safe-area-inset-bottom))
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:20
 }
 .nav button{
   border:0;background:none;color:var(--muted);font-size:11px;font-weight:800;padding:7px
 }
 .nav button.on{color:var(--green)}
-.view{display:none}
-.view.on{display:block}
+.view{display:none}.view.on{display:block}
 .small{font-size:12px}
 .source a{color:var(--green);word-break:break-all}
-.summaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.summaryCard{
-  border:1px solid var(--line);border-radius:14px;padding:14px;background:#faf9f6
-}
-.summaryCard .n{font-size:28px;font-weight:800;line-height:1.1}
 .calendarHead{
-  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 10px
 }
 .calTitle{font-size:28px;font-weight:800;text-align:center;line-height:1.2}
 .calTitle .year{display:block;font-size:14px;color:var(--muted);font-weight:700}
-.monthGrid{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:8px
-}
-.wd{
-  text-align:center;font-size:14px;font-weight:800;color:#b6b2ac
-}
-.wd.sun{color:#ef7c73}
-.wd.sat{color:#63aee3}
+.monthGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:8px}
+.wd{text-align:center;font-size:14px;font-weight:800;color:#b6b2ac}
+.wd.sun{color:#ef7c73}.wd.sat{color:#63aee3}
 .cell{
   aspect-ratio:1;border-radius:15px;display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:800;color:#b8b5af;background:transparent;border:1px solid transparent
+  font-size:16px;font-weight:800;color:#b8b5af;background:transparent;border:1px solid transparent;
+  user-select:none
 }
 .cell.other{opacity:.28}
-.cell.done{background:var(--calendar);color:#fff}
+.cell.done{background:var(--calendar);color:#fff;cursor:pointer}
 .cell.today{border-color:#9eb4a6}
-.cell.empty{visibility:hidden}
+.backupBox{
+  border:1px solid var(--line);border-radius:14px;background:#faf9f6;padding:14px;margin-top:12px
+}
+.fileLabel{
+  display:flex;align-items:center;justify-content:center;width:100%;border-radius:12px;
+  padding:12px;background:#edf1ee;color:#30483c;font-weight:800;cursor:pointer;margin:10px 0 0
+}
+.fileLabel input{display:none}
+.modalBackdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;display:none;
+  align-items:flex-end;justify-content:center
+}
+.modalBackdrop.open{display:flex}
+.modal{
+  width:min(720px,100%);max-height:88vh;overflow:auto;background:var(--bg);
+  border-radius:24px 24px 0 0;padding:16px 14px calc(24px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 35px rgba(0,0,0,.16)
+}
+.modalHandle{width:42px;height:5px;background:#c9c6bf;border-radius:99px;margin:0 auto 12px}
+.modal h2{font-size:20px;margin:4px 0 6px}
+.recordChooser{
+  display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px
+}
+.recordChip{
+  border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;
+  font-size:12px;font-weight:800;white-space:nowrap
+}
+.recordChip.active{background:var(--green);color:#fff;border-color:var(--green)}
 @media(max-width:480px){
-  .grid,.summaryGrid{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
   .monthGrid{gap:8px}
 }
 </style>
@@ -127,7 +137,7 @@ textarea{min-height:110px;resize:vertical}
 <div class="wrap">
   <div class="row">
     <div>
-      <h1>Palouse 8週間 実践トラッカー</h1>
+      <h1>Mindfulness 8週間 実践トラッカー</h1>
       <div class="sub">正式練習を続けるための個人用PWA</div>
     </div>
     <span class="badge" id="topWeek">Week 1</span>
@@ -145,7 +155,6 @@ textarea{min-height:110px;resize:vertical}
       </div>
       <div class="bar"><div id="bar"></div></div>
       <div class="days" id="days"></div>
-      <div class="notice" id="rule"></div>
     </div>
 
     <div class="card">
@@ -179,7 +188,10 @@ textarea{min-height:110px;resize:vertical}
     <div class="card" id="gateCard">
       <div class="row"><b>次のWeekへ</b><span class="badge" id="gateState">未達成</span></div>
       <p class="muted" id="gateText"></p>
-      <label style="font-weight:500"><input id="understood" type="checkbox" style="width:auto;margin-right:8px;-webkit-appearance:auto;appearance:auto;">今週の動画・読み物を確認し、内容を理解した</label>
+      <label style="font-weight:500">
+        <input id="understood" type="checkbox" style="width:auto;margin-right:8px;-webkit-appearance:auto;appearance:auto;">
+        今週の動画・読み物を確認し、内容を理解した
+      </label>
       <button class="btn" id="advance" disabled>次のWeekを解放</button>
     </div>
   </section>
@@ -201,23 +213,13 @@ textarea{min-height:110px;resize:vertical}
         </div>
       </div>
 
-      <div class="summaryGrid" style="margin:14px 0 8px">
-        <div class="summaryCard">
-          <div class="muted">今月の実践日数</div>
-          <div class="n" id="monthCount">0</div>
-        </div>
-        <div class="summaryCard">
-          <div class="muted">連続日数</div>
-          <div class="n" id="streakCount">0</div>
-        </div>
-      </div>
+      <p class="muted" style="margin:10px 0 0">色のついた日をタップすると、その日の記録を編集できます。</p>
 
       <div class="calendarHead">
-        <div class="muted"></div>
+        <div></div>
         <div class="calTitle" id="calendarTitle"></div>
-        <div class="muted"></div>
+        <div></div>
       </div>
-
       <div class="monthGrid" id="weekDaysRow"></div>
       <div class="monthGrid" id="calendarGrid"></div>
     </div>
@@ -233,22 +235,37 @@ textarea{min-height:110px;resize:vertical}
         <button class="btn alt" onclick="window.open('https://chatgpt.com/')">ChatGPTを開く</button>
       </div>
     </div>
-    <div class="card"><b>今週の記録</b><div id="logs"></div></div>
+    <div class="card">
+      <b>今週の記録</b>
+      <p class="muted">記録をタップすると編集できます。</p>
+      <div id="logs"></div>
+    </div>
   </section>
 
   <section class="view" id="settings">
     <div class="card">
-      <b>進行ルール</b>
-      <div class="notice">Palouse公式は第1〜7週で「少なくとも6日間の練習」を目安にしています。このアプリは希望に合わせ、初期設定を7日実践にしています。</div>
-      <label style="font-weight:500"><input type="radio" name="mode" value="7" style="width:auto;-webkit-appearance:auto;appearance:auto;">7日実践してから進む</label>
-      <label style="font-weight:500"><input type="radio" name="mode" value="6" style="width:auto;-webkit-appearance:auto;appearance:auto;">Palouse公式基準（6回以上）</label>
+      <b>バックアップ</b>
+      <p class="muted">
+        アプリ更新時も通常は記録が残ります。念のため、定期的にバックアップを書き出しておくと安全です。
+        端末変更・ブラウザデータ削除・再インストール時は、バックアップを読み込めます。
+      </p>
+
+      <div class="backupBox">
+        <b>バックアップを書き出す</b>
+        <p class="muted">現在の進捗・全実践記録・Week状態をJSONファイルとして保存します。</p>
+        <button class="btn alt" id="exportBackup">バックアップをダウンロード</button>
+      </div>
+
+      <div class="backupBox">
+        <b>バックアップを読み込む</b>
+        <p class="muted">以前保存したJSONファイルを選択すると、その内容を復元します。</p>
+        <label class="fileLabel">
+          バックアップをアップロード
+          <input id="importBackup" type="file" accept=".json,application/json">
+        </label>
+      </div>
     </div>
-    <div class="card">
-      <b>データ</b>
-      <p class="muted">記録はこの端末のブラウザ内に保存されます。</p>
-      <button class="btn alt" id="export">JSONバックアップを書き出す</button>
-      <button class="btn danger" id="reset" style="margin-top:10px">全記録をリセット</button>
-    </div>
+
     <div class="card source">
       <b>公式情報源</b>
       <div id="sources"></div>
@@ -264,6 +281,48 @@ textarea{min-height:110px;resize:vertical}
   <button data-v="settings">設定</button>
 </nav>
 
+<div class="modalBackdrop" id="editBackdrop">
+  <div class="modal">
+    <div class="modalHandle"></div>
+    <div class="row">
+      <div>
+        <h2>記録を編集</h2>
+        <div class="muted" id="editDateLabel"></div>
+      </div>
+      <button class="btn alt small" id="closeEditor">閉じる</button>
+    </div>
+
+    <div class="recordChooser" id="recordChooser"></div>
+
+    <div class="card" style="margin-bottom:0">
+      <label>Week</label>
+      <select id="editWeek"></select>
+
+      <label>実践内容</label>
+      <select id="editPractice"></select>
+
+      <div class="grid">
+        <div>
+          <label>実践時間（分）</label>
+          <input id="editMinutes" type="number" min="1" max="180" inputmode="numeric">
+        </div>
+        <div>
+          <label>日付</label>
+          <input id="editDate" type="date">
+        </div>
+      </div>
+
+      <label>メモ</label>
+      <textarea id="editMemo"></textarea>
+
+      <div class="grid" style="margin-top:14px">
+        <button class="btn danger" id="deleteRecord">この記録を削除</button>
+        <button class="btn" id="saveEdit">変更を保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const W=[
 {t:'自動操縦から気づきへ',o:'1日目はレーズン瞑想、その後はボディスキャン。',p:['レーズン瞑想','ボディスキャン'],r:['レーズン瞑想','ボディスキャン','ボディスキャン','ボディスキャン','ボディスキャン','ボディスキャン','ボディスキャン'],n:'第1週の正式練習。',s:'https://palousemindfulness.com/ja/MBSR/week1.html'},
@@ -276,45 +335,67 @@ const W=[
 {t:'まとめ：自分の練習を発展させる',o:'第8週には公式の練習日誌はありません。今後の継続方法を作る週です。',p:['静坐瞑想','ボディスキャン','マインドフルネスヨガ','慈悲の瞑想','「向き合う」瞑想','山の瞑想','湖の瞑想'],r:['静坐瞑想','ボディスキャン','マインドフルネスヨガ','慈悲の瞑想','静坐瞑想','ボディスキャン','マインドフルネスヨガ'],n:'第8週の7日記録は、このアプリ独自の継続機能です。',s:'https://palousemindfulness.com/ja/MBSR/week8.html'}
 ];
 
-const STORAGE_KEYS=['palouseTrackerV4','palouseTrackerV3','palouseTrackerV2','palouseTrackerV1'];
-const SAVE_KEY='palouseTrackerV4';
-const DEFAULT_STATE={cw:1,uw:1,mode:'7',under:{},logs:[]};
+const SAVE_KEY='palouseTrackerV5';
+const OLD_KEYS=['palouseTrackerV4','palouseTrackerV3','palouseTrackerV2','palouseTrackerV1'];
+const DEFAULT_STATE={cw:1,uw:1,under:{},logs:[]};
 
-function mergeOldFieldsToMemo(log){
-  if(log.memo) return log.memo;
+function legacyMemo(x){
+  if(x.memo) return x.memo;
   const parts=[];
-  if(log.c) parts.push('感想: ' + log.c);
-  if(log.i) parts.push('気づいたこと: ' + log.i);
-  if(log.f) parts.push('難しかったこと: ' + log.f);
+  if(x.c) parts.push('感想: '+x.c);
+  if(x.i) parts.push('気づいたこと: '+x.i);
+  if(x.f) parts.push('難しかったこと: '+x.f);
+  if(x.comment) parts.push('感想: '+x.comment);
+  if(x.insight) parts.push('気づいたこと: '+x.insight);
+  if(x.difficulty) parts.push('難しかったこと: '+x.difficulty);
   return parts.join('\n');
 }
-
-function loadState(){
-  let raw=null;
-  for(const k of STORAGE_KEYS){
-    try{
-      const txt=localStorage.getItem(k);
-      if(txt){raw=JSON.parse(txt);break;}
-    }catch(e){}
-  }
+function normalizeLog(x){
+  return {
+    id:x.id || ('r-'+Date.now()+'-'+Math.random().toString(36).slice(2)),
+    w:Number(x.w || x.week || 1),
+    d:x.d || x.date,
+    p:x.p || x.practice || '静坐瞑想',
+    m:Number(x.m || x.minutes || 30),
+    memo:legacyMemo(x)
+  };
+}
+function normalizeState(raw){
   const s={...DEFAULT_STATE,...(raw||{})};
-  s.logs=(s.logs||[]).map(x=>({
-    w:x.w,
-    d:x.d,
-    p:x.p,
-    m:Number(x.m||30),
-    memo:mergeOldFieldsToMemo(x)
-  }));
+  s.cw=Number(s.cw || s.currentWeek || 1);
+  s.uw=Number(s.uw || s.unlockedWeek || s.cw || 1);
+  s.under=s.under || s.understood || {};
+  s.logs=(s.logs||[]).map(normalizeLog);
+  delete s.mode;
+  delete s.currentWeek;
+  delete s.unlockedWeek;
+  delete s.understood;
   return s;
 }
-let S=loadState();
+function loadState(){
+  try{
+    const own=localStorage.getItem(SAVE_KEY);
+    if(own) return normalizeState(JSON.parse(own));
+  }catch(e){}
+  for(const k of OLD_KEYS){
+    try{
+      const txt=localStorage.getItem(k);
+      if(txt){
+        const migrated=normalizeState(JSON.parse(txt));
+        localStorage.setItem(SAVE_KEY,JSON.stringify(migrated));
+        return migrated;
+      }
+    }catch(e){}
+  }
+  return normalizeState(DEFAULT_STATE);
+}
 
+let S=loadState();
 const q=id=>document.getElementById(id);
 const saveState=()=>localStorage.setItem(SAVE_KEY,JSON.stringify(S));
 const wl=w=>S.logs.filter(x=>x.w===w);
-const allDates=()=>Array.from(new Set(S.logs.map(x=>x.d))).sort();
 const dayCount=w=>new Set(wl(w).map(x=>x.d)).size;
-const target=w=>w===8?(S.mode==='7'?7:0):(S.mode==='7'?7:6);
+const target=w=>w===8?7:7;
 const special=w=>{
   const l=wl(w);
   if(w===3) return l.some(x=>x.p.includes('ボディスキャン'));
@@ -329,49 +410,27 @@ const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 let calendarMonth=new Date();
 calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1);
 
-function formatToday(){
-  return new Date().toLocaleDateString('sv-SE');
-}
-function parseDateLocal(str){
-  const [y,m,d]=str.split('-').map(Number);
-  return new Date(y,m-1,d);
-}
+function todayISO(){return new Date().toLocaleDateString('sv-SE')}
 function ymd(date){
   const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
   return `${y}-${m}-${d}`;
 }
-function currentStreak(){
-  const dates=allDates();
-  if(!dates.length) return 0;
-  let streak=1;
-  for(let i=dates.length-1;i>0;i--){
-    const a=parseDateLocal(dates[i]);
-    const b=parseDateLocal(dates[i-1]);
-    const diff=(a-b)/(1000*60*60*24);
-    if(diff===1) streak++;
-    else break;
-  }
-  return streak;
-}
-function monthPracticeCount(year,monthIndex){
-  const prefix=`${year}-${String(monthIndex+1).padStart(2,'0')}-`;
-  return new Set(S.logs.filter(x=>x.d.startsWith(prefix)).map(x=>x.d)).size;
-}
 
 function render(){
-  let w=S.cw,d=W[w-1],c=dayCount(w),t=target(w);
+  const w=S.cw,d=W[w-1],c=dayCount(w),t=target(w);
   q('topWeek').textContent='Week '+w;
   q('weekName').textContent='第'+w+'週';
   q('theme').textContent=d.t;
-  q('count').textContent=w===8&&t===0?c+'日記録':c+' / '+t+'日';
-  q('bar').style.width=(t?Math.min(100,c/t*100):100)+'%';
+  q('count').textContent=c+' / '+t+'日';
+  q('bar').style.width=Math.min(100,c/t*100)+'%';
   q('days').innerHTML=[1,2,3,4,5,6,7].map(i=>'<div class="day '+(i<=c?'done':'')+'">'+i+'</div>').join('');
-  q('rule').textContent=w<8?'Palouse公式：少なくとも6日間の正式練習が目安。現在の設定：'+(S.mode==='7'?'7日実践':'公式6回')+'。':'第8週は公式の練習日誌なし。';
-  let rec=d.r[Math.min(c,6)];
+
+  const rec=d.r[Math.min(c,6)];
   q('recommended').textContent=rec;
   q('note').textContent=d.n;
   q('practice').innerHTML=d.p.map(x=>'<option>'+x+'</option>').join('');
   if(d.p.includes(rec)) q('practice').value=rec;
+
   q('understood').checked=!!S.under[w];
   q('gateCard').style.display=w===8?'none':'block';
   q('gateText').textContent=t+'日分の正式練習＋今週の内容確認で次へ進みます。';
@@ -383,6 +442,7 @@ function render(){
   renderCalendar();
   q('sources').innerHTML=W.map((x,i)=>'<p><a target="_blank" href="'+x.s+'">Palouse公式 Week '+(i+1)+'</a></p>').join('');
 }
+
 function renderWeeks(){
   q('weekButtons').innerHTML=W.map((x,i)=>{
     const w=i+1,cl=w>S.uw?'lock':w<S.cw?'done':w===S.cw?'current':'';
@@ -392,73 +452,77 @@ function renderWeeks(){
 }
 window.detail=w=>{
   const d=W[w-1];
-  q('weekDetail').innerHTML='<div class="row"><div><b>Week '+w+'</b><div class="muted">'+d.t+'</div></div><span class="badge">'+dayCount(w)+'日記録</span></div><div class="notice">'+d.o+'</div><p class="muted">'+d.n+'</p><button class="btn alt" onclick="window.open(\''+d.s+'\')">公式Weekページ</button>';
+  q('weekDetail').innerHTML=
+    '<div class="row"><div><b>Week '+w+'</b><div class="muted">'+d.t+'</div></div><span class="badge">'+dayCount(w)+'日記録</span></div>'+
+    '<p class="muted">'+d.n+'</p>'+
+    '<button class="btn alt" onclick="window.open(\''+d.s+'\')">公式Weekページ</button>';
 };
+
 function renderReview(){
-  const w=S.cw,d=W[w-1],l=wl(w);
-  let t='Palouse Mindfulness Week '+w+'（'+d.t+'）の実践記録です。\nPalouse/MBSRの枠組みだけを使って、①変化・パターン、②つまずき、③実践上の理解、④次の1週間の調整を分析してください。記録から言えることと言えないことを分けてください。\n\n';
+  const w=S.cw,d=W[w-1],l=wl(w).sort((a,b)=>a.d.localeCompare(b.d));
+  let t='Palouse Mindfulness Week '+w+'（'+d.t+'）の実践記録です。\n'+
+        'Palouse/MBSRの枠組みだけを使って、①変化・パターン、②つまずき、③実践上の理解、④次の1週間の調整を分析してください。記録から言えることと言えないことを分けてください。\n\n';
   l.forEach(x=>{
     t+='【'+x.d+' / '+x.p+' / '+x.m+'分】\nメモ：'+(x.memo||'')+'\n\n';
   });
   q('reviewBadge').textContent='Week '+w;
   q('reviewText').value=t;
-  q('logs').innerHTML=l.length?l.slice().reverse().map(x=>'<div class="log"><b>'+esc(x.p)+'</b><div class="muted">'+esc(x.d)+'・'+x.m+'分</div><div>'+esc(x.memo||'')+'</div></div>').join(''):'<p class="muted">まだ記録はありません。</p>';
+  q('logs').innerHTML=l.length?l.slice().reverse().map(x=>
+    '<div class="log" onclick="openEditorById(\''+x.id+'\')">'+
+    '<b>'+esc(x.p)+'</b><div class="muted">'+esc(x.d)+'・'+x.m+'分</div>'+
+    '<div>'+esc(x.memo||'')+'</div></div>'
+  ).join(''):'<p class="muted">まだ記録はありません。</p>';
 }
+
 function renderCalendar(){
-  const year=calendarMonth.getFullYear(), month=calendarMonth.getMonth();
-  q('monthCount').textContent=monthPracticeCount(year,month);
-  q('streakCount').textContent=currentStreak();
+  const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
   q('calendarTitle').innerHTML='<span class="year">'+year+'</span>'+(month+1)+'月';
   q('weekDaysRow').innerHTML=[
-    '<div class="wd sun">日</div>',
-    '<div class="wd">月</div>',
-    '<div class="wd">火</div>',
-    '<div class="wd">水</div>',
-    '<div class="wd">木</div>',
-    '<div class="wd">金</div>',
-    '<div class="wd sat">土</div>',
+    '<div class="wd sun">日</div>','<div class="wd">月</div>','<div class="wd">火</div>',
+    '<div class="wd">水</div>','<div class="wd">木</div>','<div class="wd">金</div>',
+    '<div class="wd sat">土</div>'
   ].join('');
-  const firstDay=new Date(year,month,1);
-  const startWeekday=firstDay.getDay();
-  const daysInMonth=new Date(year,month+1,0).getDate();
-  const daysInPrevMonth=new Date(year,month,0).getDate();
+
+  const first=new Date(year,month,1),start=first.getDay();
+  const dim=new Date(year,month+1,0).getDate();
+  const prevDim=new Date(year,month,0).getDate();
   const practiced=new Set(S.logs.map(x=>x.d));
-  const todayYmd=formatToday();
+  const today=todayISO();
   let cells=[];
-  for(let i=0;i<startWeekday;i++){
-    const day=daysInPrevMonth-startWeekday+i+1;
-    cells.push('<div class="cell other">'+day+'</div>');
+
+  for(let i=0;i<start;i++){
+    const d=prevDim-start+i+1;
+    cells.push('<div class="cell other">'+d+'</div>');
   }
-  for(let day=1;day<=daysInMonth;day++){
-    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     let cls='cell';
     if(practiced.has(ds)) cls+=' done';
-    if(ds===todayYmd) cls+=' today';
-    cells.push('<div class="'+cls+'">'+day+'</div>');
+    if(ds===today) cls+=' today';
+    const click=practiced.has(ds)?`onclick="openEditorForDate('${ds}')"`:'';
+    cells.push('<div class="'+cls+'" '+click+'>'+d+'</div>');
   }
+  let next=1;
   while(cells.length%7!==0){
-    const n=cells.length-(startWeekday+daysInMonth)+1;
-    cells.push('<div class="cell other">'+n+'</div>');
+    cells.push('<div class="cell other">'+(next++)+'</div>');
   }
   q('calendarGrid').innerHTML=cells.join('');
 }
 
-q('date').value=formatToday();
+q('date').value=todayISO();
 
 q('save').onclick=()=>{
   const d=q('date').value;
   if(!d) return alert('日付を入力してください');
   const record={
-    w:S.cw,
-    d,
-    p:q('practice').value,
-    m:+q('minutes').value||0,
-    memo:q('memo').value.trim()
+    id:'r-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+    w:S.cw,d,p:q('practice').value,m:+q('minutes').value||0,memo:q('memo').value.trim()
   };
-  const idx=S.logs.findIndex(x=>x.w===S.cw && x.d===d);
-  if(idx>=0){
-    if(!confirm('この日の記録を上書きしますか？')) return;
-    S.logs[idx]=record;
+  const same=S.logs.findIndex(x=>x.w===S.cw && x.d===d);
+  if(same>=0){
+    if(!confirm('このWeekには同じ日付の記録があります。上書きしますか？')) return;
+    record.id=S.logs[same].id;
+    S.logs[same]=record;
   }else{
     S.logs.push(record);
   }
@@ -481,14 +545,7 @@ q('advance').onclick=()=>{
   render();
   scrollTo(0,0);
 };
-document.querySelectorAll('input[name=mode]').forEach(x=>{
-  x.checked=x.value===S.mode;
-  x.onchange=()=>{
-    S.mode=x.value;
-    saveState();
-    render();
-  };
-});
+
 q('copy').onclick=async()=>{
   try{
     await navigator.clipboard.writeText(q('reviewText').value);
@@ -498,26 +555,7 @@ q('copy').onclick=async()=>{
     document.execCommand('copy');
   }
 };
-q('export').onclick=()=>{
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));
-  a.download='palouse-records.json';
-  a.click();
-};
-q('reset').onclick=()=>{
-  if(confirm('全記録を削除しますか？')){
-    STORAGE_KEYS.forEach(k=>localStorage.removeItem(k));
-    location.reload();
-  }
-};
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');
-  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
-  q(b.dataset.v).classList.add('on');
-  if(b.dataset.v==='review') renderReview();
-  if(b.dataset.v==='weeks') renderCalendar();
-});
+
 q('prevMonth').onclick=()=>{
   calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);
   renderCalendar();
@@ -527,9 +565,153 @@ q('nextMonth').onclick=()=>{
   renderCalendar();
 };
 
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  q(b.dataset.v).classList.add('on');
+  if(b.dataset.v==='review') renderReview();
+  if(b.dataset.v==='weeks') renderCalendar();
+});
+
+/* Backup */
+q('exportBackup').onclick=()=>{
+  const payload={
+    app:'mindfulness-tracker',
+    version:5,
+    exportedAt:new Date().toISOString(),
+    state:S
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='mindfulness-backup-'+todayISO()+'.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),500);
+};
+
+q('importBackup').onchange=async e=>{
+  const file=e.target.files?.[0];
+  if(!file) return;
+  try{
+    const text=await file.text();
+    const parsed=JSON.parse(text);
+    const restored=normalizeState(parsed.state || parsed);
+    if(!Array.isArray(restored.logs)) throw new Error('invalid');
+    const ok=confirm(
+      'バックアップを読み込むと、現在の記録と進捗はバックアップ内容に置き換わります。\n続けますか？'
+    );
+    if(!ok){ e.target.value=''; return; }
+    S=restored;
+    saveState();
+    render();
+    alert('バックアップを復元しました');
+  }catch(err){
+    alert('このファイルは有効なバックアップとして読み込めませんでした');
+  }
+  e.target.value='';
+};
+
+/* Editor */
+let editorRecordIds=[];
+let activeRecordId=null;
+
+function populateEditPractices(week, selected){
+  const opts=[...W[week-1].p];
+  if(selected && !opts.includes(selected)) opts.push(selected);
+  q('editPractice').innerHTML=opts.map(x=>'<option>'+esc(x)+'</option>').join('');
+  if(selected) q('editPractice').value=selected;
+}
+function loadEditorRecord(id){
+  const r=S.logs.find(x=>x.id===id);
+  if(!r) return;
+  activeRecordId=id;
+  q('editDateLabel').textContent=r.d;
+  q('editWeek').value=String(r.w);
+  populateEditPractices(r.w,r.p);
+  q('editMinutes').value=r.m;
+  q('editDate').value=r.d;
+  q('editMemo').value=r.memo||'';
+
+  q('recordChooser').innerHTML=editorRecordIds.length>1
+    ? editorRecordIds.map(rid=>{
+        const rr=S.logs.find(x=>x.id===rid);
+        return '<button class="recordChip '+(rid===id?'active':'')+'" onclick="loadEditorRecord(\''+rid+'\')">'+
+               'Week '+rr.w+'</button>';
+      }).join('')
+    : '';
+}
+window.loadEditorRecord=loadEditorRecord;
+
+window.openEditorById=id=>{
+  const r=S.logs.find(x=>x.id===id);
+  if(!r) return;
+  editorRecordIds=S.logs.filter(x=>x.d===r.d).map(x=>x.id);
+  q('editWeek').innerHTML=W.map((_,i)=>'<option value="'+(i+1)+'">Week '+(i+1)+'</option>').join('');
+  loadEditorRecord(id);
+  q('editBackdrop').classList.add('open');
+};
+window.openEditorForDate=date=>{
+  const records=S.logs.filter(x=>x.d===date);
+  if(!records.length) return;
+  editorRecordIds=records.map(x=>x.id);
+  q('editWeek').innerHTML=W.map((_,i)=>'<option value="'+(i+1)+'">Week '+(i+1)+'</option>').join('');
+  loadEditorRecord(records[0].id);
+  q('editBackdrop').classList.add('open');
+};
+
+q('editWeek').onchange=()=>{
+  const week=Number(q('editWeek').value);
+  populateEditPractices(week,q('editPractice').value);
+};
+q('closeEditor').onclick=()=>q('editBackdrop').classList.remove('open');
+q('editBackdrop').onclick=e=>{
+  if(e.target===q('editBackdrop')) q('editBackdrop').classList.remove('open');
+};
+
+q('saveEdit').onclick=()=>{
+  const idx=S.logs.findIndex(x=>x.id===activeRecordId);
+  if(idx<0) return;
+  const newWeek=Number(q('editWeek').value);
+  const newDate=q('editDate').value;
+  if(!newDate) return alert('日付を入力してください');
+
+  const duplicate=S.logs.find(x=>x.id!==activeRecordId && x.w===newWeek && x.d===newDate);
+  if(duplicate){
+    return alert('同じWeek・同じ日付の記録がすでにあります。先にその記録を編集または削除してください。');
+  }
+
+  S.logs[idx]={
+    id:activeRecordId,
+    w:newWeek,
+    d:newDate,
+    p:q('editPractice').value,
+    m:+q('editMinutes').value||0,
+    memo:q('editMemo').value.trim()
+  };
+
+  S.uw=Math.max(S.uw,newWeek);
+  saveState();
+  q('editBackdrop').classList.remove('open');
+  render();
+  alert('変更を保存しました');
+};
+
+q('deleteRecord').onclick=()=>{
+  const r=S.logs.find(x=>x.id===activeRecordId);
+  if(!r) return;
+  if(!confirm(r.d+' の記録を削除しますか？')) return;
+  S.logs=S.logs.filter(x=>x.id!==activeRecordId);
+  saveState();
+  q('editBackdrop').classList.remove('open');
+  render();
+  alert('記録を削除しました');
+};
+
 if('serviceWorker' in navigator){
   addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 }
+saveState();
 render();
 </script>
 </body>
