@@ -1,4 +1,4 @@
-const CACHE='mindfulness-flat-v5';
+const CACHE='mindfulness-flat-v6';
 const ASSETS=['./','./index.html','./manifest.webmanifest'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
