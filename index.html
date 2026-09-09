@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4b6657">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Palouse">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>Palouse 8週間 実践トラッカー</title>
+<style>
+:root{--bg:#f6f3ed;--card:#fff;--text:#22231f;--muted:#6d6e67;--line:#e5e1d9;--green:#4b6657;--soft:#e4ece7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;line-height:1.55}
+.wrap{max-width:720px;margin:auto;padding:16px 14px 86px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+h1{font-size:21px;margin:4px 0 2px}.sub,.muted{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin:12px 0;box-shadow:0 8px 26px rgba(0,0,0,.05)}
+.badge{background:var(--soft);color:#315040;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.big{font-size:27px;font-weight:800}
+.bar{height:12px;background:#eeeae4;border-radius:999px;overflow:hidden;margin:13px 0}.bar>div{height:100%;background:var(--green)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day{aspect-ratio:1;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted)}.day.done{background:var(--green);color:#fff}
+.notice{border-left:4px solid var(--green);background:#f4f7f5;padding:10px 12px;border-radius:10px;margin-top:12px;font-size:13px}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;font:inherit}
+textarea{min-height:86px;resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;border:0;border-radius:12px;padding:12px;background:var(--green);color:#fff;font-weight:800;font:inherit}.btn.alt{background:#edf1ee;color:#30483c}.btn:disabled{opacity:.4}
+.weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.w{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px;font-weight:700;color:var(--muted)}.w.current,.w.done{background:var(--green);color:#fff}.w.lock{opacity:.35}
+.log{padding:10px 0;border-top:1px solid var(--line)}.log:first-child{border-top:0}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(720px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.nav button{border:0;background:none;color:var(--muted);font-size:11px;font-weight:800;padding:7px}.nav button.on{color:var(--green)}.view{display:none}.view.on{display:block}.small{font-size:12px}.source a{color:var(--green);word-break:break-all}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="row">
+    <div><h1>Palouse 8週間 実践トラッカー</h1><div class="sub">正式練習を続けるための個人用PWA</div></div>
+    <span class="badge" id="topWeek">Week 1</span>
+  </div>
+
+  <section class="view on" id="today">
+    <div class="card">
+      <div class="row">
+        <div><div class="muted">現在</div><div class="big" id="weekName">第1週</div><div class="muted" id="theme"></div></div>
+        <span class="badge" id="count"></span>
+      </div>
+      <div class="bar"><div id="bar"></div></div>
+      <div class="days" id="days"></div>
+      <div class="notice" id="rule"></div>
+    </div>
+
+    <div class="card">
+      <div class="muted">今日の正式練習</div>
+      <div class="big" id="recommended" style="font-size:23px;margin-top:5px"></div>
+      <p class="muted" id="note"></p>
+
+      <label>実際に行う練習</label><select id="practice"></select>
+
+      <div class="grid">
+        <div><label>実践時間（分）</label><input id="minutes" type="number" value="30" min="1" max="180"></div>
+        <div><label>日付</label><input id="date" type="date"></div>
+      </div>
+
+      <label>感想・起こったこと</label><textarea id="comment" placeholder="短くてもOK"></textarea>
+      <label>気づいたこと（任意）</label><textarea id="insight"></textarea>
+      <label>難しかったこと（任意）</label><textarea id="difficulty"></textarea>
+
+      <div class="grid" style="margin-top:14px">
+        <button class="btn alt" onclick="window.open('https://palousemindfulness.com/ja/meditations/index.html')">公式ガイド</button>
+        <button class="btn" id="save">実践を記録</button>
+      </div>
+    </div>
+
+    <div class="card" id="gateCard">
+      <div class="row"><b>次のWeekへ</b><span class="badge" id="gateState">未達成</span></div>
+      <p class="muted" id="gateText"></p>
+      <label style="font-weight:500"><input id="understood" type="checkbox" style="width:auto;margin-right:8px">今週の動画・読み物を確認し、内容を理解した</label>
+      <button class="btn" id="advance" disabled>次のWeekを解放</button>
+    </div>
+  </section>
+
+  <section class="view" id="weeks">
+    <div class="card"><b>8週間の進捗</b><div class="weeks" id="weekButtons" style="margin-top:12px"></div></div>
+    <div class="card" id="weekDetail"></div>
+  </section>
+
+  <section class="view" id="review">
+    <div class="card">
+      <div class="row"><b>ChatGPT用 振り返り</b><span class="badge" id="reviewBadge"></span></div>
+      <p class="muted">今週の記録をまとめます。「コピー」してChatGPTへ貼り付けてください。</p>
+      <textarea id="reviewText" style="min-height:330px"></textarea>
+      <div class="grid" style="margin-top:12px">
+        <button class="btn" id="copy">コピー</button>
+        <button class="btn alt" onclick="window.open('https://chatgpt.com/')">ChatGPTを開く</button>
+      </div>
+    </div>
+    <div class="card"><b>今週の記録</b><div id="logs"></div></div>
+  </section>
+
+  <section class="view" id="settings">
+    <div class="card">
+      <b>進行ルール</b>
+      <div class="notice">Palouse公式は第1〜7週で「少なくとも6日間の練習」を目安にしています。このアプリは希望に合わせ、初期設定を7日実践にしています。</div>
+      <label style="font-weight:500"><input type="radio" name="mode" value="7" style="width:auto">7日実践してから進む</label>
+      <label style="font-weight:500"><input type="radio" name="mode" value="6" style="width:auto">Palouse公式基準（6回以上）</label>
+    </div>
+    <div class="card">
+      <b>データ</b><p class="muted">記録はこの端末のブラウザ内に保存されます。</p>
+      <button class="btn alt" id="export">JSONバックアップを書き出す</button>
+      <button class="btn" id="reset" style="margin-top:10px;background:#9a4c44">全記録をリセット</button>
+    </div>
+    <div class="card source"><b>公式情報源</b><div id="sources"></div><p class="small muted">これはPalouse Mindfulness公式アプリではなく、個人用トラッカーです。</p></div>
+  </section>
+</div>
+
+<nav class="nav">
+  <button class="on" data-v="today">今日</button><button data-v="weeks">8週間</button><button data-v="review">振り返り</button><button data-v="settings">設定</button>
+</nav>
+
+<script>
+const W=[
+{t:'自動操縦から気づきへ',o:'1日目はレーズン瞑想、その後はボディスキャン。',p:['レーズン瞑想','ボディスキャン'],r:['レーズン瞑想','ボディスキャン','ボディスキャン','ボディスキャン','ボディスキャン','ボディスキャン','ボディスキャン'],n:'第1週の正式練習。',s:'https://palousemindfulness.com/ja/MBSR/week1.html'},
+{t:'注意力と脳',o:'静坐瞑想とボディスキャンを交互に行う。',p:['静坐瞑想','ボディスキャン'],r:['静坐瞑想','ボディスキャン','静坐瞑想','ボディスキャン','静坐瞑想','ボディスキャン','静坐瞑想'],n:'静坐瞑想とボディスキャンを交互に。',s:'https://palousemindfulness.com/ja/MBSR/week2.html'},
+{t:'思考と向き合う',o:'ヨガと静坐を交互に行い、今週中にボディスキャンを1回。',p:['マインドフルネスヨガ','静坐瞑想','ボディスキャン'],r:['マインドフルネスヨガ','静坐瞑想','ボディスキャン','マインドフルネスヨガ','静坐瞑想','マインドフルネスヨガ','静坐瞑想'],n:'ボディスキャンの日は変更して構いません。',s:'https://palousemindfulness.com/ja/MBSR/week3.html'},
+{t:'ストレス：対応 vs 反応',o:'ヨガと静坐瞑想を交互に行う。',p:['マインドフルネスヨガ','静坐瞑想'],r:['マインドフルネスヨガ','静坐瞑想','マインドフルネスヨガ','静坐瞑想','マインドフルネスヨガ','静坐瞑想','マインドフルネスヨガ'],n:'正式練習を中心に記録します。',s:'https://palousemindfulness.com/ja/MBSR/week4.html'},
+{t:'困難な感情や身体的な痛みに対処する',o:'最初の2日は「向き合う」瞑想。その後は既習の練習から選択。',p:['「向き合う」瞑想','静坐瞑想','ボディスキャン','マインドフルネスヨガ'],r:['「向き合う」瞑想','「向き合う」瞑想','静坐瞑想','ボディスキャン','マインドフルネスヨガ','静坐瞑想','ボディスキャン'],n:'3日目以降は既習の練習から選べます。',s:'https://palousemindfulness.com/ja/MBSR/week5.html'},
+{t:'マインドフルネスとコミュニケーション',o:'主要な練習から選び、少なくとも1回は山または湖の瞑想。',p:['静坐瞑想','ボディスキャン','マインドフルネスヨガ','山の瞑想','湖の瞑想'],r:['静坐瞑想','ボディスキャン','山の瞑想','マインドフルネスヨガ','静坐瞑想','ボディスキャン','湖の瞑想'],n:'少なくとも1回は山または湖の瞑想を。',s:'https://palousemindfulness.com/ja/MBSR/week6.html'},
+{t:'マインドフルネスと思いやり',o:'既習の練習を続け、慈悲の瞑想を少なくとも1回。',p:['慈悲の瞑想','静坐瞑想','ボディスキャン','マインドフルネスヨガ','「向き合う」瞑想','山の瞑想','湖の瞑想'],r:['慈悲の瞑想','静坐瞑想','ボディスキャン','マインドフルネスヨガ','静坐瞑想','「向き合う」瞑想','ボディスキャン'],n:'慈悲の瞑想は少なくとも1回。',s:'https://palousemindfulness.com/ja/MBSR/week7.html'},
+{t:'まとめ：自分の練習を発展させる',o:'第8週には公式の練習日誌はありません。今後の継続方法を作る週です。',p:['静坐瞑想','ボディスキャン','マインドフルネスヨガ','慈悲の瞑想','「向き合う」瞑想','山の瞑想','湖の瞑想'],r:['静坐瞑想','ボディスキャン','マインドフルネスヨガ','慈悲の瞑想','静坐瞑想','ボディスキャン','マインドフルネスヨガ'],n:'第8週の7日記録は、このアプリ独自の継続機能です。',s:'https://palousemindfulness.com/ja/MBSR/week8.html'}];
+
+const K='palouseTrackerV3',D={cw:1,uw:1,mode:'7',under:{},logs:[]};
+let S=(()=>{try{return {...D,...JSON.parse(localStorage.getItem(K)||'{}')}}catch(e){return {...D}}})();
+const q=id=>document.getElementById(id),saveState=()=>localStorage.setItem(K,JSON.stringify(S));
+const wl=w=>S.logs.filter(x=>x.w===w),dayCount=w=>new Set(wl(w).map(x=>x.d)).size,target=w=>w===8?(S.mode==='7'?7:0):(S.mode==='7'?7:6);
+const special=w=>{let l=wl(w);if(w===3)return l.some(x=>x.p.includes('ボディスキャン'));if(w===5)return l.filter(x=>x.p.includes('向き合う')).length>=2;if(w===6)return l.some(x=>x.p.includes('山の瞑想')||x.p.includes('湖の瞑想'));if(w===7)return l.some(x=>x.p.includes('慈悲の瞑想'));return true};
+const can=w=>w<8&&dayCount(w)>=target(w)&&special(w)&&!!S.under[w];
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function render(){
+  let w=S.cw,d=W[w-1],c=dayCount(w),t=target(w);
+  q('topWeek').textContent='Week '+w;q('weekName').textContent='第'+w+'週';q('theme').textContent=d.t;q('count').textContent=w===8&&t===0?c+'日記録':c+' / '+t+'日';
+  q('bar').style.width=(t?Math.min(100,c/t*100):100)+'%';q('days').innerHTML=[1,2,3,4,5,6,7].map(i=>'<div class="day '+(i<=c?'done':'')+'">'+i+'</div>').join('');
+  q('rule').textContent=w<8?'Palouse公式：少なくとも6日間の正式練習が目安。現在の設定：'+(S.mode==='7'?'7日実践':'公式6回')+'。':'第8週は公式の練習日誌なし。';
+  let rec=d.r[Math.min(c,6)];q('recommended').textContent=rec;q('note').textContent=d.n;q('practice').innerHTML=d.p.map(x=>'<option>'+x+'</option>').join('');if(d.p.includes(rec))q('practice').value=rec;
+  q('understood').checked=!!S.under[w];q('gateCard').style.display=w===8?'none':'block';q('gateText').textContent=t+'日分の正式練習＋今週の内容確認で次へ進みます。';q('advance').disabled=!can(w);q('gateState').textContent=can(w)?'解放できます':'未達成';
+  renderWeeks();renderReview();q('sources').innerHTML=W.map((x,i)=>'<p><a target="_blank" href="'+x.s+'">Palouse公式 Week '+(i+1)+'</a></p>').join('');
+}
+function renderWeeks(){q('weekButtons').innerHTML=W.map((x,i)=>{let w=i+1,cl=w>S.uw?'lock':w<S.cw?'done':w===S.cw?'current':'';return '<button class="w '+cl+'" '+(w>S.uw?'disabled':'')+' onclick="detail('+w+')">Week '+w+'</button>'}).join('');detail(S.cw)}
+window.detail=w=>{let d=W[w-1];q('weekDetail').innerHTML='<div class="row"><div><b>Week '+w+'</b><div class="muted">'+d.t+'</div></div><span class="badge">'+dayCount(w)+'日記録</span></div><div class="notice">'+d.o+'</div><p class="muted">'+d.n+'</p><button class="btn alt" onclick="window.open(\''+d.s+'\')">公式Weekページ</button>'}
+function renderReview(){let w=S.cw,d=W[w-1],l=wl(w),t='Palouse Mindfulness Week '+w+'（'+d.t+'）の実践記録です。\nPalouse/MBSRの枠組みだけを使って、①変化・パターン、②つまずき、③実践上の理解、④次の1週間の調整を分析してください。記録から言えることと言えないことを分けてください。\n\n';l.forEach(x=>{t+='【'+x.d+' / '+x.p+' / '+x.m+'分】\n感想：'+(x.c||'')+'\n気づき：'+(x.i||'')+'\n難しかったこと：'+(x.f||'')+'\n\n'});q('reviewBadge').textContent='Week '+w;q('reviewText').value=t;q('logs').innerHTML=l.length?l.slice().reverse().map(x=>'<div class="log"><b>'+esc(x.p)+'</b><div class="muted">'+esc(x.d)+'・'+x.m+'分</div><div>'+esc(x.c)+'</div></div>').join(''):'<p class="muted">まだ記録はありません。</p>'}
+
+q('date').value=new Date().toLocaleDateString('sv-SE');
+q('save').onclick=()=>{let d=q('date').value;if(!d)return alert('日付を入力してください');let r={w:S.cw,d,p:q('practice').value,m:+q('minutes').value||0,c:q('comment').value.trim(),i:q('insight').value.trim(),f:q('difficulty').value.trim()};let n=S.logs.findIndex(x=>x.w===S.cw&&x.d===d);if(n>=0){if(!confirm('この日の記録を上書きしますか？'))return;S.logs[n]=r}else S.logs.push(r);saveState();q('comment').value=q('insight').value=q('difficulty').value='';render();alert('記録しました')};
+q('understood').onchange=e=>{S.under[S.cw]=e.target.checked;saveState();render()};
+q('advance').onclick=()=>{if(!can(S.cw))return;S.cw++;S.uw=Math.max(S.uw,S.cw);saveState();render();scrollTo(0,0)};
+document.querySelectorAll('input[name=mode]').forEach(x=>{x.checked=x.value===S.mode;x.onchange=()=>{S.mode=x.value;saveState();render()}});
+q('copy').onclick=async()=>{try{await navigator.clipboard.writeText(q('reviewText').value);alert('コピーしました')}catch(e){q('reviewText').select();document.execCommand('copy')}};
+q('export').onclick=()=>{let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));a.download='palouse-records.json';a.click()};
+q('reset').onclick=()=>{if(confirm('全記録を削除しますか？')){localStorage.removeItem(K);location.reload()}};
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));q(b.dataset.v).classList.add('on');if(b.dataset.v==='review')renderReview()});
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+render();
+</script>
+</body>
+</html>

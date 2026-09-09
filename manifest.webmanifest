@@ -1,0 +1,10 @@
+{
+  "name": "Palouse 8週間 実践トラッカー",
+  "short_name": "Palouse",
+  "description": "Palouse Mindfulness 8週間実践の個人用トラッカー",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3ed",
+  "theme_color": "#4b6657"
+}
